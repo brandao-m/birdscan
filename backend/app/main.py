@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.routes.analyses import router as analyses_router
+from app.api.routes.found_birds import router as found_birds_router
 from app.api.routes.auth import router as auth_router
 from app.api.routes.birds import router as birds_router
 from app.api.routes.health import router as health_router
@@ -27,3 +28,4 @@ app.include_router(users_router)
 app.include_router(auth_router)
 app.include_router(birds_router)
 app.include_router(analyses_router)
+app.include_router(found_birds_router)
