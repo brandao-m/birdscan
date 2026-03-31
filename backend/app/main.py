@@ -6,6 +6,7 @@ from app.api.routes.auth import router as auth_router
 from app.api.routes.birds import router as birds_router
 from app.api.routes.health import router as health_router
 from app.api.routes.users import router as users_router
+from app.api.routes.uploads import router as uploads_router
 from app.core.settings import settings
 from app.db.init_db import init_db
 
@@ -29,3 +30,4 @@ app.include_router(auth_router)
 app.include_router(birds_router)
 app.include_router(analyses_router)
 app.include_router(found_birds_router)
+app.include_router(uploads_router)
