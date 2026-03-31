@@ -18,6 +18,16 @@ class BirdCreate(BirdBase):
     pass
 
 
+class BirdSummary(BaseModel):
+    id: int
+    common_name: str
+    scientific_name: str
+    image_url: str | None = None
+
+    class Config:
+        from_attributes = True
+
+
 class BirdResponse(BirdBase):
     id: int
     created_at: datetime
