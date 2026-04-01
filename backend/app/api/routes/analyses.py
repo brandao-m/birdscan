@@ -4,6 +4,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
+from app.api.dependencies.auth import get_current_user
 from app.db.dependencies import get_db
 from app.models.analysis import Analysis
 from app.models.bird import Bird
@@ -53,13 +54,10 @@ def create_analysis(analysis_data: AnalysisCreate, db: Session = Depends(get_db)
 
 @router.post('/upload', response_model=AnalysisUploadResponse, status_code=201)
 def upload_and_create_analysis(
-    user_id: int = Form(...),
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail='Usuario não encontrado')
     
     if not file.filename:
         raise HTTPException(status_code=400, detail='O arquivo deve ter um nome')
@@ -91,7 +89,7 @@ def upload_and_create_analysis(
     simulated_alternatives = 'Bem-te-vi: 0.61 | Sanhaço-cinzento: 0.45'
 
     new_analysis = Analysis(
-        user_id=user_id,
+        user_id=current_user.id,
         bird_id=bird.id,
         audio_path=file_path.as_posix(),
         confidence=simulated_confidence,
@@ -102,7 +100,7 @@ def upload_and_create_analysis(
 
     update_found_birds(
         db=db,
-        user_id=user_id,
+        user_id=current_user.id,
         bird_id=bird.id,
     )
 
