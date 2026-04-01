@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.core.security import verify_password
+from app.core.security import create_access_token, verify_password
 from app.db.dependencies import get_db
 from app.models.user import User
 from app.schemas.auth import LoginRequest, LoginResponse
@@ -19,8 +19,11 @@ def login(credentials: LoginRequest, db: Session = Depends(get_db)):
     if not verify_password(credentials.password, user.password_hash):
         raise HTTPException(status_code=401, detail='Email ou password invalido')
     
+    access_token = create_access_token(subject=str(user.id))
+    
     return LoginResponse(
-        message='Login efetuado com sucesso',
+        access_token=access_token,
+        token_type='bearer',
         user_id=user.id,
         name=user.name,
         email=user.email,
