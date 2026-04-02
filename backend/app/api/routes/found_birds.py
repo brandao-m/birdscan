@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from app.api.dependencies.auth import get_current_user
 from app.db.dependencies import get_db
 from app.models.bird import Bird
 from app.models.found_bird import FoundBird
@@ -11,18 +12,14 @@ from app.schemas.found_bird import FoundBirdResponse
 router = APIRouter(prefix='/found-birds', tags=['Found Birds'])
 
 
-@router.get('/', response_model=list[FoundBirdResponse])
-def list_found_birds(
-    user_id: int = Query(...),
+@router.get('/me', response_model=list[FoundBirdResponse])
+def list_my_found_birds(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail='Usuario não encontrado')
-    
-    found_birds = (
+    found_birds= (
         db.query(FoundBird)
-        .filter(FoundBird.user_id == user_id)
+        .filter(FoundBird.user_id == current_user.id)
         .all()
     )
 
