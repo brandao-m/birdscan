@@ -13,6 +13,7 @@ from app.schemas.analysis import AnalysisCreate, AnalysisResponse
 from app.schemas.analysis_upload import AnalysisUploadResponse
 from app.schemas.bird import BirdSummary
 from app.services.found_bird_service import update_found_birds
+from app.services.bird_identification_service import identify_bird_from_audio
 
 router = APIRouter(prefix='/analyses', tags=['Analyses'])
 
@@ -81,12 +82,17 @@ def upload_and_create_analysis(
     with file_path.open('wb') as buffer:
         buffer.write(file.file.read())
 
-    bird = db.query(Bird).first()
-    if not bird:
-        raise HTTPException(status_code=404, detail='Nenhuma ave disponivel para analise')
+    try:
+        identification_result = identify_bird_from_audio(
+            db=db,
+            file_path=file_path.as_posix(),
+        )
+    except ValueError as error:
+        raise HTTPException(status_code=404, detail=str(error))
     
-    simulated_confidence = 0.87
-    simulated_alternatives = 'Bem-te-vi: 0.61 | Sanhaço-cinzento: 0.45'
+    bird = identification_result['bird']
+    simulated_confidence = identification_result['confidence']
+    simulated_alternatives = identification_result['alternatives']
 
     new_analysis = Analysis(
         user_id=current_user.id,
