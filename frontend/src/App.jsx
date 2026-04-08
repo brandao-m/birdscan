@@ -8,6 +8,9 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [token, setToken] = useState('')
   const [currentUser, setCurrentUser] = useState(null)
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [analysisResult, setAnalysisResult] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
 
   useEffect(() => {
     const savedToken = localStorage.getItem('birdscan_token')
@@ -75,8 +78,55 @@ function App() {
 
     setToken('')
     setCurrentUser(null)
+    setSelectedFile(null)
+    setAnalysisResult(null)
     setMessage('')
     setError('')
+  }
+
+  function handleFileChange(event) {
+    const file = event.target.files?.[0] || null
+    setSelectedFile(file)
+    setAnalysisResult(null)
+    setError('')
+    setMessage('')
+  }
+
+  async function handleAudioUpload() {
+    if (!selectedFile) {
+      setError('Selecione um arquivo de áudio antes de enviar')
+      return
+    }
+
+    setError('')
+    setMessage('')
+    setIsUploading(true)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', selectedFile)
+
+      const response = await fetch('http://127.0.0.1:8000/analyses/upload', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Falha ao enviar áudio')
+      }
+
+      setAnalysisResult(data)
+      setMessage('Áudio enviado e analisado com sucesso.')
+    } catch (err) {
+      setError(err.message || 'Ocorreu um erro ao enviar o áudio')
+    } finally {
+      setIsUploading(false)
+    }
   }
 
   if (!token) {
@@ -197,22 +247,82 @@ function App() {
               Faça o upload do canto da ave para receber a identificação mais provável.
             </p>
 
-            <button className="mt-6 rounded-2xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-500">
-              Escolher áudio
-            </button>
+            <div className="mt-6 space-y-4">
+              <input
+                type="file"
+                accept=".mp3,.wav,.ogg,.webm,audio/*"
+                onChange={handleFileChange}
+                className="block w-full text-sm text-slate-600 file:mr-4 file:rounded-xl file:border-0 file:bg-emerald-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-emerald-700 hover:file:bg-emerald-200"
+              />
+
+              {selectedFile && (
+                <p className="text-sm text-slate-600">
+                  Arquivo selecionado: <span className="font-medium">{selectedFile.name}</span>
+                </p>
+              )}
+
+              <button
+                onClick={handleAudioUpload}
+                disabled={isUploading || !selectedFile}
+                className="rounded-2xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isUploading ? 'Enviando...' : 'Enviar áudio'}
+              </button>
+            </div>
           </div>
 
           <div className="rounded-3xl border border-emerald-100 bg-white p-6 shadow-xl shadow-emerald-100/40">
-            <h2 className="text-xl font-semibold text-slate-900">Aves encontradas</h2>
+            <h2 className="text-xl font-semibold text-slate-900">Resultado da identificação</h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              Veja o histórico das aves que você já encontrou no BirdScan.
+              O resultado da análise aparecerá aqui após o envio do áudio.
             </p>
 
-            <button className="mt-6 rounded-2xl border border-emerald-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-emerald-100">
-              Ver coleção
-            </button>
+            {analysisResult ? (
+              <div className="mt-6 space-y-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+                <div>
+                  <p className="text-sm text-slate-500">Ave mais provável</p>
+                  <h3 className="text-lg font-bold text-slate-900">
+                    {analysisResult.bird.common_name}
+                  </h3>
+                  <p className="text-sm italic text-slate-600">
+                    {analysisResult.bird.scientific_name}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-sm text-slate-500">Confiança</p>
+                  <p className="text-base font-semibold text-emerald-700">
+                    {(analysisResult.confidence * 100).toFixed(0)}%
+                  </p>
+                </div>
+
+                {analysisResult.bird.image_url && (
+                  <img
+                    src={analysisResult.bird.image_url}
+                    alt={analysisResult.bird.common_name}
+                    className="w-full rounded-2xl object-cover"
+                  />
+                )}
+              </div>
+            ) : (
+              <div className="mt-6 rounded-2xl border border-dashed border-emerald-200 bg-emerald-50 px-4 py-6 text-sm text-slate-500">
+                Nenhuma análise realizada ainda.
+              </div>
+            )}
           </div>
         </div>
+
+        {message && (
+          <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-100 px-4 py-3 text-sm text-emerald-700">
+            {message}
+          </div>
+        )}
+
+        {error && (
+          <div className="mt-6 rounded-2xl border border-red-200 bg-red-100 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
       </section>
     </main>
   )
