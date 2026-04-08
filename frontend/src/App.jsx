@@ -11,6 +11,8 @@ function App() {
   const [selectedFile, setSelectedFile] = useState(null)
   const [analysisResult, setAnalysisResult] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [foundBirds, setFoundBirds] = useState([])
+  const [isLoadingFoundBirds, setIsLoadingFoundBirds] = useState(false)
 
   useEffect(() => {
     const savedToken = localStorage.getItem('birdscan_token')
@@ -80,6 +82,7 @@ function App() {
     setCurrentUser(null)
     setSelectedFile(null)
     setAnalysisResult(null)
+    setFoundBirds([])
     setMessage('')
     setError('')
   }
@@ -122,10 +125,37 @@ function App() {
 
       setAnalysisResult(data)
       setMessage('Áudio enviado e analisado com sucesso.')
+      await handleLoadFoundBirds()
     } catch (err) {
       setError(err.message || 'Ocorreu um erro ao enviar o áudio')
     } finally {
       setIsUploading(false)
+    }
+  }
+
+  async function handleLoadFoundBirds() {
+    setError('')
+    setIsLoadingFoundBirds(true)
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/found-birds/me', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Falha ao carregar aves encontradas')
+      }
+
+      setFoundBirds(data)
+    } catch (err) {
+      setError(err.message || 'Ocorreu um erro ao buscar aves encontradas')
+    } finally {
+      setIsLoadingFoundBirds(false)
     }
   }
 
@@ -310,6 +340,71 @@ function App() {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="mt-8 rounded-3xl border border-emerald-100 bg-white p-6 shadow-xl shadow-emerald-100/40">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-slate-900">Aves encontradas</h2>
+              <p className="mt-2 text-sm text-slate-600">
+                Veja as aves que você já encontrou com o BirdScan.
+              </p>
+            </div>
+
+            <button
+              onClick={handleLoadFoundBirds}
+              disabled={isLoadingFoundBirds}
+              className="rounded-2xl border border-emerald-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isLoadingFoundBirds ? 'Carregando...' : 'Ver coleção'}
+            </button>
+          </div>
+
+          {foundBirds.length > 0 ? (
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {foundBirds.map((item) => (
+                <div
+                  key={item.id}
+                  className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4"
+                >
+                  {item.bird.image_url && (
+                    <img
+                      src={item.bird.image_url}
+                      alt={item.bird.common_name}
+                      className="mb-4 h-48 w-full rounded-2xl object-cover"
+                    />
+                  )}
+
+                  <h3 className="text-lg font-bold text-slate-900">
+                    {item.bird.common_name}
+                  </h3>
+
+                  <p className="text-sm italic text-slate-600">
+                    {item.bird.scientific_name}
+                  </p>
+
+                  <div className="mt-4 space-y-1 text-sm text-slate-600">
+                    <p>
+                      <span className="font-medium text-slate-800">Vezes encontrada:</span>{' '}
+                      {item.times_found}
+                    </p>
+                    <p>
+                      <span className="font-medium text-slate-800">Primeira vez:</span>{' '}
+                      {new Date(item.first_seen_at).toLocaleString()}
+                    </p>
+                    <p>
+                      <span className="font-medium text-slate-800">Última vez:</span>{' '}
+                      {new Date(item.last_seen_at).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-6 rounded-2xl border border-dashed border-emerald-200 bg-emerald-50 px-4 py-6 text-sm text-slate-500">
+              Nenhuma ave encontrada carregada ainda.
+            </div>
+          )}
         </div>
 
         {message && (
