@@ -17,6 +17,22 @@ O usuário envia um arquivo de som, o sistema realiza a análise (simulada neste
 
 ---
 
+## Screenshots
+
+### Login
+![Login](assets/login.png)
+
+### Tela principal
+![Dashboard](assets/dashboard.png)
+
+### Resultado da identificação
+![Resultado](assets/resultado.png)
+
+### Coleção de aves
+![Coleção](assets/historico.png)
+
+---
+
 ## Funcionalidades
 
 -  Autenticação com JWT  

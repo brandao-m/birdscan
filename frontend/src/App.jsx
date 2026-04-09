@@ -174,8 +174,7 @@ function App() {
               </h1>
 
               <p className="mt-3 text-sm leading-6 text-slate-600">
-                Acesse sua conta para enviar áudios, identificar aves e acompanhar
-                suas aves encontradas.
+                Acesse sua conta para enviar áudios, identificar aves e acompanhar suas descobertas.
               </p>
             </div>
 
