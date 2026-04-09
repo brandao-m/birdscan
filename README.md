@@ -1,10 +1,10 @@
-# 🐦 BirdScan
+# BirdScan
 
 Aplicação full-stack que identifica aves a partir do canto enviado pelo usuário, retornando a espécie mais provável junto com informações detalhadas e histórico de descobertas.
 
 ---
 
-## 🚀 Sobre o projeto
+## Sobre o projeto
 
 O **BirdScan** foi desenvolvido com o objetivo de simular uma experiência real de identificação de aves por áudio.
 
@@ -17,12 +17,12 @@ O usuário envia um arquivo de som, o sistema realiza a análise (simulada neste
 
 ---
 
-## 🧠 Funcionalidades
+## Funcionalidades
 
-- 🔐 Autenticação com JWT  
-- 📤 Upload de áudio autenticado  
-- 🧩 Identificação simulada de aves  
-- 📊 Exibição de resultado com:
+-  Autenticação com JWT  
+-  Upload de áudio autenticado  
+-  Identificação simulada de aves  
+-  Exibição de resultado com:
   - nome popular  
   - nome científico  
   - imagem  
@@ -33,13 +33,13 @@ O usuário envia um arquivo de som, o sistema realiza a análise (simulada neste
   - curiosidade  
   - nível de confiança  
   - alternativas possíveis  
-- 🗂 Histórico de aves encontradas por usuário  
-- 🔄 Atualização automática da coleção após nova identificação  
-- 💾 Persistência de sessão no frontend  
+-  Histórico de aves encontradas por usuário  
+-  Atualização automática da coleção após nova identificação  
+-  Persistência de sessão no frontend  
 
 ---
 
-## 🛠️ Tecnologias utilizadas
+## Tecnologias utilizadas
 
 ### Backend
 - Python  
@@ -55,7 +55,7 @@ O usuário envia um arquivo de som, o sistema realiza a análise (simulada neste
 
 ---
 
-## 📂 Estrutura do projeto
+## Estrutura do projeto
 
 ```
 birdscan/
@@ -78,9 +78,9 @@ frontend/
 
 ---
 
-## ⚙️ Como rodar o projeto
+## Como rodar o projeto
 
-### 🔹 Backend
+### Backend
 
 ```
 cd backend
@@ -103,7 +103,7 @@ http://127.0.0.1:8000/docs
 
 ---
 
-### 🔹 Frontend
+### Frontend
 ```
 cd frontend
 
@@ -117,7 +117,7 @@ http://localhost:5173
 
 ---
 
-🔑 Fluxo da aplicação
+Fluxo da aplicação
 1. Usuário realiza login
 2. Seleciona um arquivo de áudio
 3. Envia o áudio para o backend
@@ -127,7 +127,7 @@ http://localhost:5173
 
 ---
 
-🧪 Observação importante
+Observação importante
 
 A identificação de aves neste projeto é simulada.
 
