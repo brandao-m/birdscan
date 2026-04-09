@@ -35,23 +35,12 @@ O usuário envia um arquivo de som, o sistema realiza a análise (simulada neste
 
 ## Funcionalidades
 
--  Autenticação com JWT  
--  Upload de áudio autenticado  
--  Identificação simulada de aves  
--  Exibição de resultado com:
-  - nome popular  
-  - nome científico  
-  - imagem  
-  - descrição  
-  - habitat  
-  - alimentação  
-  - distribuição  
-  - curiosidade  
-  - nível de confiança  
-  - alternativas possíveis  
--  Histórico de aves encontradas por usuário  
--  Atualização automática da coleção após nova identificação  
--  Persistência de sessão no frontend  
+- Autenticação com JWT  
+- Upload de áudio com identificação de aves  
+- Exibição de resultado com informações detalhadas  
+- Histórico de aves encontradas por usuário  
+- Atualização automática da coleção  
+- Persistência de sessão no frontend  
 
 ---
 
