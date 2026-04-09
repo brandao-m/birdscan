@@ -258,7 +258,7 @@ function App() {
             </h1>
 
             <p className="mt-2 text-sm text-slate-600">
-              Envie um áudio para identificar uma ave e acompanhe suas aves encontradas.
+              Identifique aves por áudio e acompanhe seu histórico.
             </p>
           </div>
 
@@ -308,7 +308,7 @@ function App() {
             </p>
 
             {analysisResult ? (
-              <div className="mt-6 space-y-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+              <div className="mt-6 space-y-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
                 <div>
                   <p className="text-sm text-slate-500">Ave mais provável</p>
                   <h3 className="text-lg font-bold text-slate-900">
@@ -332,6 +332,60 @@ function App() {
                     alt={analysisResult.bird.common_name}
                     className="w-full rounded-2xl object-cover"
                   />
+                )}
+
+                {analysisResult.bird.description && (
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">Descrição</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      {analysisResult.bird.description}
+                    </p>
+                  </div>
+                )}
+
+                {analysisResult.bird.habitat && (
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">Habitat</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      {analysisResult.bird.habitat}
+                    </p>
+                  </div>
+                )}
+
+                {analysisResult.bird.diet && (
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">Alimentação</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      {analysisResult.bird.diet}
+                    </p>
+                  </div>
+                )}
+
+                {analysisResult.bird.distribution && (
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">Distribuição</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      {analysisResult.bird.distribution}
+                    </p>
+                  </div>
+                )}
+
+                {analysisResult.bird.curiosity && (
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">Curiosidade</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      {analysisResult.bird.curiosity}
+                    </p>
+                  </div>
+                )}
+
+                {analysisResult.alternatives && (
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800">Outras possibilidades</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      {analysisResult.alternatives}
+                    </p>
+                  </div>
                 )}
               </div>
             ) : (

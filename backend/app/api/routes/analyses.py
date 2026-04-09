@@ -10,8 +10,7 @@ from app.models.analysis import Analysis
 from app.models.bird import Bird
 from app.models.user import User
 from app.schemas.analysis import AnalysisCreate, AnalysisResponse
-from app.schemas.analysis_upload import AnalysisUploadResponse
-from app.schemas.bird import BirdSummary
+from app.schemas.analysis_upload import AnalysisUploadBirdResponse, AnalysisUploadResponse
 from app.services.found_bird_service import update_found_birds
 from app.services.bird_identification_service import identify_bird_from_audio
 
@@ -117,13 +116,19 @@ def upload_and_create_analysis(
         message='Audio e analise criados com sucesso',
         filename=unique_filename,
         file_path=file_path.as_posix(),
-        bird=BirdSummary(
+        bird=AnalysisUploadBirdResponse(
             id=bird.id,
             common_name=bird.common_name,
             scientific_name=bird.scientific_name,
+            description=bird.description,
+            habitat=bird.habitat,
+            diet=bird.diet,
+            distribution=bird.distribution,
+            Curiosity=bird.curiosity,
             image_url=bird.image_url,
         ),
         confidence=simulated_confidence,
+        alternatives=simulated_alternatives,
         analysis_id=new_analysis.id,
     )
 
